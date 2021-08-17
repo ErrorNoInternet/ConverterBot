@@ -17,9 +17,9 @@ import (
 
 var (
 	startTime   int64
-	prefix      string  = ")"
-	embedColor  int     = 5592405
-	cpuUsage    float64 = 0.0
+	cpuUsage    float64
+	prefix      string = ")"
+	embedColor  int    = 5592405
 	currentUser *discordgo.User
 	guildList   []*discordgo.GuildCreate
 )
