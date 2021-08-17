@@ -76,25 +76,20 @@ var conversions = []ConversionData{
 	ConversionData{Input: "bit", Output: "gb", Type: "divide", Number: 1000000000000},
 	ConversionData{Input: "bit", Output: "tb", Type: "divide", Number: 1000000000000000},
 	ConversionData{Input: "bit", Output: "pb", Type: "divide", Number: 1000000000000000000},
-
 	ConversionData{Input: "byte", Output: "kb", Type: "divide", Number: 1000},
 	ConversionData{Input: "byte", Output: "mb", Type: "divide", Number: 1000000},
 	ConversionData{Input: "byte", Output: "gb", Type: "divide", Number: 1000000000},
 	ConversionData{Input: "byte", Output: "tb", Type: "divide", Number: 1000000000000},
 	ConversionData{Input: "byte", Output: "pb", Type: "divide", Number: 1000000000000000},
-
 	ConversionData{Input: "kb", Output: "mb", Type: "divide", Number: 1000},
 	ConversionData{Input: "kb", Output: "gb", Type: "divide", Number: 1000000},
 	ConversionData{Input: "kb", Output: "tb", Type: "divide", Number: 1000000000},
 	ConversionData{Input: "kb", Output: "pb", Type: "divide", Number: 1000000000000},
-
 	ConversionData{Input: "mb", Output: "gb", Type: "divide", Number: 1000},
 	ConversionData{Input: "mb", Output: "tb", Type: "divide", Number: 1000000},
 	ConversionData{Input: "mb", Output: "pb", Type: "divide", Number: 1000000000},
-
 	ConversionData{Input: "gb", Output: "tb", Type: "divide", Number: 1000},
 	ConversionData{Input: "gb", Output: "pb", Type: "divide", Number: 1000000},
-
 	ConversionData{Input: "tb", Output: "pb", Type: "divide", Number: 1000},
 }
 
@@ -122,8 +117,8 @@ func main() {
 			conversions = append(conversions, ConversionData{conversion.Output, conversion.Input, reversedType, conversion.Number})
 		}
 	}
-	token := os.Getenv("TOKEN")
 	rand.Seed(time.Now().UnixNano())
+	token := os.Getenv("TOKEN")
 	if token == "" {
 		fmt.Println("Unable to load TOKEN variable")
 		return
@@ -211,10 +206,10 @@ func messageCreateEvent(session *discordgo.Session, message *discordgo.MessageCr
 		hoursTime := minutesTime / 60
 		secondsTime = secondsTime % 60
 		minutesTime = minutesTime % 60
-		totalMembers := 0
 		secondsOutput := strconv.Itoa(int(secondsTime)) + "s"
 		minutesOutput := strconv.Itoa(int(minutesTime)) + "m"
 		hoursOutput := strconv.Itoa(int(hoursTime)) + "hr"
+		totalMembers := 0
 		for _, server := range guildList {
 			totalMembers += server.MemberCount
 		}
