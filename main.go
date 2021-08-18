@@ -47,6 +47,7 @@ var abbreviations = map[string]string{
 	"tb":   "terabyte",
 	"pb":   "petabyte",
 	"ft":   "feet",
+	"in":   "inch",
 	"lb":   "pound",
 	"kg":   "kilogram",
 	"g":    "gram",
@@ -73,6 +74,8 @@ var conversions = []ConversionData{
 	ConversionData{Input: "kg", Output: "oz", Type: "multiply", Number: 35.2739619},
 	ConversionData{Input: "kg", Output: "g", Type: "multiply", Number: 1000},
 	ConversionData{Input: "oz", Output: "g", Type: "multiply", Number: 28.3495231},
+	ConversionData{Input: "ft", Output: "in", Type: "multiply", Number: 12},
+	ConversionData{Input: "in", Output: "cm", Type: "multiply", Number: 2.54},
 
 	ConversionData{Input: "s", Output: "min", Type: "divide", Number: 60},
 	ConversionData{Input: "s", Output: "hr", Type: "divide", Number: 3600},
