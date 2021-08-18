@@ -25,11 +25,13 @@ var (
 )
 
 var commands = map[string]string{
-	"help":     "Display a list of available commands",
-	"invite":   "Display a link to invite the bot",
-	"status":   "Display the bot's current statistics",
-	"convert":  "Convert an amount to another unit",
-	"currency": "Convert an amount to another currency",
+	"help":        "Display a list of available commands",
+	"ping":        "Display the bot's current API latency",
+	"status":      "Display the bot's current statistics",
+	"invite":      "Display a link to invite the bot",
+	"conversions": "Display a list of available conversions",
+	"convert":     "Convert an amount to another unit",
+	"currency":    "Convert an amount to another currency",
 }
 
 var abbreviations = map[string]string{
@@ -52,6 +54,11 @@ var abbreviations = map[string]string{
 	"h/s":  "hash",
 	"kh/s": "kilohash",
 	"mh/s": "megahash",
+	"s":    "second",
+	"min":  "minute",
+	"hr":   "hour",
+	"d":    "day",
+	"w":    "week",
 }
 
 var conversions = []ConversionData{
@@ -66,10 +73,20 @@ var conversions = []ConversionData{
 	ConversionData{Input: "kg", Output: "g", Type: "multiply", Number: 1000},
 	ConversionData{Input: "oz", Output: "g", Type: "multiply", Number: 28.3495231},
 
+	ConversionData{Input: "s", Output: "min", Type: "divide", Number: 60},
+	ConversionData{Input: "s", Output: "hr", Type: "divide", Number: 3600},
+	ConversionData{Input: "s", Output: "d", Type: "divide", Number: 86400},
+	ConversionData{Input: "s", Output: "w", Type: "divide", Number: 604800},
+	ConversionData{Input: "min", Output: "hr", Type: "divide", Number: 60},
+	ConversionData{Input: "min", Output: "d", Type: "divide", Number: 1440},
+	ConversionData{Input: "min", Output: "w", Type: "divide", Number: 10080},
+	ConversionData{Input: "hr", Output: "d", Type: "divide", Number: 24},
+	ConversionData{Input: "hr", Output: "w", Type: "divide", Number: 168},
+	ConversionData{Input: "d", Output: "w", Type: "divide", Number: 7},
+
 	ConversionData{Input: "h/s", Output: "kh/s", Type: "divide", Number: 1000},
 	ConversionData{Input: "kh/s", Output: "mh/s", Type: "divide", Number: 1000},
 	ConversionData{Input: "mh/s", Output: "h/s", Type: "multiply", Number: 1000000},
-
 	ConversionData{Input: "bit", Output: "byte", Type: "divide", Number: 1000},
 	ConversionData{Input: "bit", Output: "kb", Type: "divide", Number: 1000000},
 	ConversionData{Input: "bit", Output: "mb", Type: "divide", Number: 1000000000},
@@ -172,7 +189,15 @@ func readyEvent(session *discordgo.Session, event *discordgo.Ready) {
 }
 
 func guildJoinEvent(session *discordgo.Session, guild *discordgo.GuildCreate) {
-	guildList = append(guildList, guild)
+	exists := false
+	for _, joinedGuild := range guildList {
+		if joinedGuild.ID == guild.ID {
+			exists = true
+		}
+	}
+	if !exists {
+		guildList = append(guildList, guild)
+	}
 }
 
 func messageCreateEvent(session *discordgo.Session, message *discordgo.MessageCreate) {
@@ -189,6 +214,15 @@ func messageCreateEvent(session *discordgo.Session, message *discordgo.MessageCr
 		embed := &discordgo.MessageEmbed{
 			Title:       "Invite Link",
 			Description: fmt.Sprintf("You can invite me to your server using [this link](%v)", inviteLink),
+			Color:       embedColor,
+		}
+		session.ChannelMessageSendEmbed(message.ChannelID, embed)
+	}
+
+	if strings.HasPrefix(message.Content, prefix+"ping") {
+		embed := &discordgo.MessageEmbed{
+			Title:       "Pong :ping_pong:",
+			Description: fmt.Sprintf("Latency: **%v ms**", session.HeartbeatLatency().Milliseconds()),
 			Color:       embedColor,
 		}
 		session.ChannelMessageSendEmbed(message.ChannelID, embed)
@@ -267,6 +301,19 @@ func messageCreateEvent(session *discordgo.Session, message *discordgo.MessageCr
 		session.ChannelMessageSendEmbed(message.ChannelID, embed)
 	}
 
+	if strings.HasPrefix(message.Content, prefix+"conversions") {
+		description := ""
+		for _, conversion := range abbreviations {
+			description += conversion + ", "
+		}
+		embed := &discordgo.MessageEmbed{
+			Title:       "Available Conversions",
+			Description: strings.TrimSuffix(description, ", "),
+			Color:       embedColor,
+		}
+		session.ChannelMessageSendEmbed(message.ChannelID, embed)
+	}
+
 	if strings.HasPrefix(message.Content, prefix+"convert") {
 		arguments := strings.Split(message.Content, " ")
 		if len(arguments) == 4 {
@@ -287,11 +334,15 @@ func messageCreateEvent(session *discordgo.Session, message *discordgo.MessageCr
 				}
 			}
 			if !supported {
-				if strings.HasSuffix(input, "s") {
-					input = strings.TrimSuffix(input, "s")
+				if len(input) > 1 {
+					if strings.HasSuffix(input, "s") {
+						input = strings.TrimSuffix(input, "s")
+					}
 				}
-				if strings.HasSuffix(output, "s") {
-					output = strings.TrimSuffix(output, "s")
+				if len(output) > 1 {
+					if strings.HasSuffix(output, "s") {
+						output = strings.TrimSuffix(output, "s")
+					}
 				}
 				for abbreviation, name := range abbreviations {
 					if strings.ToLower(name) == input {
@@ -382,7 +433,7 @@ func messageCreateEvent(session *discordgo.Session, message *discordgo.MessageCr
 	if strings.HasPrefix(message.Content, prefix+"help") || message.Content == prefix+"help" {
 		commandDescription := ""
 		for command, description := range commands {
-			commandDescription += fmt.Sprintf("`%v` - %v\n", command, description)
+			commandDescription += fmt.Sprintf("`%v%v` - %v\n", prefix, command, description)
 		}
 		embed := &discordgo.MessageEmbed{
 			Title:       "ConverterBot Commands",
