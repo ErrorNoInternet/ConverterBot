@@ -59,6 +59,7 @@ var abbreviations = map[string]string{
 	"hr":   "hour",
 	"d":    "day",
 	"w":    "week",
+	"y":    "year",
 }
 
 var conversions = []ConversionData{
@@ -77,12 +78,17 @@ var conversions = []ConversionData{
 	ConversionData{Input: "s", Output: "hr", Type: "divide", Number: 3600},
 	ConversionData{Input: "s", Output: "d", Type: "divide", Number: 86400},
 	ConversionData{Input: "s", Output: "w", Type: "divide", Number: 604800},
+	ConversionData{Input: "s", Output: "y", Type: "divide", Number: 31556926},
 	ConversionData{Input: "min", Output: "hr", Type: "divide", Number: 60},
 	ConversionData{Input: "min", Output: "d", Type: "divide", Number: 1440},
 	ConversionData{Input: "min", Output: "w", Type: "divide", Number: 10080},
+	ConversionData{Input: "min", Output: "y", Type: "divide", Number: 525948.766},
 	ConversionData{Input: "hr", Output: "d", Type: "divide", Number: 24},
 	ConversionData{Input: "hr", Output: "w", Type: "divide", Number: 168},
+	ConversionData{Input: "hr", Output: "y", Type: "divide", Number: 8765.81277},
 	ConversionData{Input: "d", Output: "w", Type: "divide", Number: 7},
+	ConversionData{Input: "d", Output: "y", Type: "divide", Number: 365},
+	ConversionData{Input: "w", Output: "y", Type: "divide", Number: 52.177457},
 
 	ConversionData{Input: "h/s", Output: "kh/s", Type: "divide", Number: 1000},
 	ConversionData{Input: "kh/s", Output: "mh/s", Type: "divide", Number: 1000},
