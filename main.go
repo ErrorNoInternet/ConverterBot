@@ -353,6 +353,16 @@ func messageCreateEvent(session *discordgo.Session, message *discordgo.MessageCr
 						output = strings.TrimSuffix(output, "s")
 					}
 				}
+				if len(input) > 2 {
+					if strings.HasSuffix(input, "es") {
+						input = strings.TrimSuffix(input, "es")
+					}
+				}
+				if len(output) > 2 {
+					if strings.HasSuffix(output, "es") {
+						output = strings.TrimSuffix(output, "es")
+					}
+				}
 				for abbreviation, name := range abbreviations {
 					if strings.ToLower(name) == input {
 						input = abbreviation
