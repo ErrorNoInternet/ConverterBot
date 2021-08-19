@@ -343,16 +343,6 @@ func messageCreateEvent(session *discordgo.Session, message *discordgo.MessageCr
 				}
 			}
 			if !supported {
-				if len(input) > 2 {
-					if strings.HasSuffix(input, "es") {
-						input = strings.TrimSuffix(input, "es")
-					}
-				}
-				if len(output) > 2 {
-					if strings.HasSuffix(output, "es") {
-						output = strings.TrimSuffix(output, "es")
-					}
-				}
 				if len(input) > 1 {
 					if strings.HasSuffix(input, "s") {
 						input = strings.TrimSuffix(input, "s")
