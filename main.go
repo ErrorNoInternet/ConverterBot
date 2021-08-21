@@ -24,6 +24,10 @@ var (
 	guildList   []*discordgo.GuildCreate
 )
 
+var suggestionManagers = []string{
+	"531392146767347712",
+}
+
 var commands = map[string]string{
 	"help":        "Display a list of available commands",
 	"ping":        "Display the bot's current API latency",
@@ -32,6 +36,7 @@ var commands = map[string]string{
 	"conversions": "Display a list of available conversions",
 	"convert":     "Convert an amount to another unit",
 	"currency":    "Convert an amount to another currency",
+	"suggest":     "Send a suggestion to the bot creators",
 }
 
 var abbreviations = map[string]string{
@@ -321,6 +326,51 @@ func messageCreateEvent(session *discordgo.Session, message *discordgo.MessageCr
 			Color:       embedColor,
 		}
 		session.ChannelMessageSendEmbed(message.ChannelID, embed)
+	}
+
+	if strings.HasPrefix(message.Content, prefix+"suggest") {
+		arguments := strings.Split(message.Content, " ")
+		if len(arguments) > 1 {
+			suggestion := ""
+			for index, argument := range arguments {
+				if index != 0 {
+					suggestion += argument + " "
+				}
+			}
+			sentUsers := []string{}
+			for _, userID := range suggestionManagers {
+				for _, guild := range guildList {
+					for _, member := range guild.Members {
+						if member.User.ID == userID {
+							sent := false
+							for _, sentUser := range sentUsers {
+								if sentUser == member.User.ID {
+									sent = true
+								}
+							}
+							if sent {
+								continue
+							}
+							sentUsers = append(sentUsers, member.User.ID)
+							channel, _ := session.UserChannelCreate(member.User.ID)
+							session.ChannelMessageSend(
+								channel.ID,
+								fmt.Sprintf(
+									"**%v#%v (**`%v`**) has sent a suggestion:**\n%v",
+									message.Author.Username,
+									message.Author.Discriminator,
+									message.Author.ID,
+									suggestion,
+								),
+							)
+						}
+					}
+				}
+			}
+			session.ChannelMessageSend(message.ChannelID, "Your suggestion has been successfully sent")
+		} else {
+			session.ChannelMessageSend(message.ChannelID, fmt.Sprintf("The syntax is `%vsuggest <suggestion>`", prefix))
+		}
 	}
 
 	if strings.HasPrefix(message.Content, prefix+"convert") {
