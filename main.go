@@ -60,6 +60,7 @@ var abbreviations = map[string]string{
 	"h/s":  "hash",
 	"kh/s": "kilohash",
 	"mh/s": "megahash",
+	"ms":   "millisecond",
 	"s":    "second",
 	"min":  "minute",
 	"hr":   "hour",
@@ -82,6 +83,12 @@ var conversions = []ConversionData{
 	ConversionData{Input: "ft", Output: "in", Type: "multiply", Number: 12},
 	ConversionData{Input: "in", Output: "cm", Type: "multiply", Number: 2.54},
 
+	ConversionData{Input: "ms", Output: "s", Type: "divide", Number: 1000},
+	ConversionData{Input: "ms", Output: "min", Type: "divide", Number: 60000},
+	ConversionData{Input: "ms", Output: "hr", Type: "divide", Number: 3600000},
+	ConversionData{Input: "ms", Output: "d", Type: "divide", Number: 86400000},
+	ConversionData{Input: "ms", Output: "w", Type: "divide", Number: 604800000},
+	ConversionData{Input: "ms", Output: "y", Type: "divide", Number: 31556952000},
 	ConversionData{Input: "s", Output: "min", Type: "divide", Number: 60},
 	ConversionData{Input: "s", Output: "hr", Type: "divide", Number: 3600},
 	ConversionData{Input: "s", Output: "d", Type: "divide", Number: 86400},
@@ -393,12 +400,12 @@ func messageCreateEvent(session *discordgo.Session, message *discordgo.MessageCr
 				}
 			}
 			if !supported {
-				if len(input) > 1 {
+				if len(input) > 2 {
 					if strings.HasSuffix(input, "s") {
 						input = strings.TrimSuffix(input, "s")
 					}
 				}
-				if len(output) > 1 {
+				if len(output) > 2 {
 					if strings.HasSuffix(output, "s") {
 						output = strings.TrimSuffix(output, "s")
 					}
