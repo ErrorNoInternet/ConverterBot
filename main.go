@@ -82,6 +82,7 @@ var conversions = []ConversionData{
 	ConversionData{Input: "oz", Output: "g", Type: "multiply", Number: 28.3495231},
 	ConversionData{Input: "ft", Output: "in", Type: "multiply", Number: 12},
 	ConversionData{Input: "in", Output: "cm", Type: "multiply", Number: 2.54},
+	ConversionData{Input: "in", Output: "m", Type: "multiply", Number: 0.0254},
 
 	ConversionData{Input: "ms", Output: "s", Type: "divide", Number: 1000},
 	ConversionData{Input: "ms", Output: "min", Type: "divide", Number: 60000},
