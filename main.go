@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/dustin/go-humanize"
 	"github.com/shirou/gopsutil/cpu"
 )
 
@@ -67,6 +68,7 @@ var abbreviations = map[string]string{
 	"d":    "day",
 	"w":    "week",
 	"y":    "year",
+	"au":   "astronomical unit",
 }
 
 var conversions = []ConversionData{
@@ -76,6 +78,7 @@ var conversions = []ConversionData{
 	ConversionData{Input: "ft", Output: "cm", Type: "multiply", Number: 30.48},
 	ConversionData{Input: "m", Output: "ft", Type: "multiply", Number: 3.2808399},
 	ConversionData{Input: "km", Output: "ft", Type: "multiply", Number: 3280.8399},
+	ConversionData{Input: "au", Output: "km", Type: "multiply", Number: 149597871},
 	ConversionData{Input: "kg", Output: "lb", Type: "multiply", Number: 2.20462262},
 	ConversionData{Input: "kg", Output: "oz", Type: "multiply", Number: 35.2739619},
 	ConversionData{Input: "kg", Output: "g", Type: "multiply", Number: 1000},
@@ -222,6 +225,13 @@ func guildJoinEvent(session *discordgo.Session, guild *discordgo.GuildCreate) {
 	}
 }
 
+func humanizeNumber(number float64) string {
+	stringNumber := fmt.Sprintf("%f", number)
+	parts := strings.Split(stringNumber, ".")
+	wholeNumber, _ := strconv.ParseInt(parts[0], 10, 0)
+	return humanize.Comma(wholeNumber) + "." + parts[1]
+}
+
 func messageCreateEvent(session *discordgo.Session, message *discordgo.MessageCreate) {
 	if message.Author.Bot {
 		return
@@ -236,6 +246,15 @@ func messageCreateEvent(session *discordgo.Session, message *discordgo.MessageCr
 		embed := &discordgo.MessageEmbed{
 			Title:       "Invite Link",
 			Description: fmt.Sprintf("You can invite me to your server using [this link](%v)", inviteLink),
+			Color:       embedColor,
+		}
+		session.ChannelMessageSendEmbed(message.ChannelID, embed)
+	}
+
+	if strings.HasPrefix(message.Content, prefix+"vote") {
+		embed := &discordgo.MessageEmbed{
+			Title:       "Vote Link",
+			Description: fmt.Sprintf("You can vote for ConverterBot using [this link](%v)", "https://top.gg/bot/877069460186492978"),
 			Color:       embedColor,
 		}
 		session.ChannelMessageSendEmbed(message.ChannelID, embed)
@@ -439,8 +458,8 @@ func messageCreateEvent(session *discordgo.Session, message *discordgo.MessageCr
 					outputAbbreviation = abbreviation
 				}
 				description := fmt.Sprintf(
-					"**%.6f %v** = **%.6f %v**\n\n**Unit abbreviations:**\n`%v` = `%v`, `%v` = `%v`",
-					amount, input, convert(input, output, amount), output, input, inputAbbreviation, output, outputAbbreviation,
+					"**%v %v** = **%v %v**\n\n**Unit abbreviations:**\n`%v` = `%v`, `%v` = `%v`",
+					humanizeNumber(amount), input, humanizeNumber(convert(input, output, amount)), output, input, inputAbbreviation, output, outputAbbreviation,
 				)
 				embed := &discordgo.MessageEmbed{
 					Title:       "Conversion",
@@ -488,7 +507,7 @@ func messageCreateEvent(session *discordgo.Session, message *discordgo.MessageCr
 			}
 			embed := &discordgo.MessageEmbed{
 				Title:       "Currency Convert",
-				Description: fmt.Sprintf("**%.6f %v** = **%.6f %v**", amount, strings.ToUpper(input), amount*rawNumber, strings.ToUpper(output)),
+				Description: fmt.Sprintf("**%v %v** = **%v %v**", humanizeNumber(amount), strings.ToUpper(input), humanizeNumber(amount*rawNumber), strings.ToUpper(output)),
 				Color:       embedColor,
 			}
 			session.ChannelMessageSendEmbed(message.ChannelID, embed)
