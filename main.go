@@ -403,7 +403,7 @@ func messageCreateEvent(session *discordgo.Session, message *discordgo.MessageCr
 	if strings.HasPrefix(message.Content, prefix+"convert") {
 		arguments := strings.Split(message.Content, " ")
 		if len(arguments) == 4 {
-			rawNumber, errorObject := strconv.ParseFloat(arguments[1], 10)
+			rawNumber, errorObject := strconv.ParseFloat(arguments[1], 64)
 			if errorObject != nil {
 				session.ChannelMessageSend(message.ChannelID, "Please enter a valid amount")
 				return
@@ -478,7 +478,7 @@ func messageCreateEvent(session *discordgo.Session, message *discordgo.MessageCr
 	if strings.HasPrefix(message.Content, prefix+"currency") {
 		arguments := strings.Split(message.Content, " ")
 		if len(arguments) == 4 {
-			rawNumber, errorObject := strconv.ParseFloat(arguments[1], 10)
+			rawNumber, errorObject := strconv.ParseFloat(arguments[1], 64)
 			if errorObject != nil {
 				session.ChannelMessageSend(message.ChannelID, "Please enter a valid amount")
 				return
@@ -500,7 +500,7 @@ func messageCreateEvent(session *discordgo.Session, message *discordgo.MessageCr
 				session.ChannelMessageSend(message.ChannelID, "That currency was not found")
 				return
 			}
-			rawNumber, errorObject = strconv.ParseFloat(strings.Split(strings.Split(string(response), ": ")[2], "\n")[0], 10)
+			rawNumber, errorObject = strconv.ParseFloat(strings.Split(strings.Split(string(response), ": ")[2], "\n")[0], 64)
 			if errorObject != nil {
 				session.ChannelMessageSend(message.ChannelID, "Unable to convert currency")
 				return
