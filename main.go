@@ -202,16 +202,16 @@ var commandHandlers = map[string]func(session *discordgo.Session, interaction *d
 	},
 	"currency": func(session *discordgo.Session, interaction *discordgo.InteractionCreate) {
 		errorText := "Unable to convert currencies"
-		amount, errorObject := strconv.ParseFloat(interaction.ApplicationCommandData().Options[0].StringValue(), 10)
+		amount, errorObject := strconv.ParseFloat(strings.Replace(interaction.ApplicationCommandData().Options[0].StringValue(), " ", "", -1), 10)
 		if errorObject != nil {
 			session.InteractionRespond(interaction.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
-				Data: &discordgo.InteractionResponseData{Content: errorText, Flags: 64},
+				Data: &discordgo.InteractionResponseData{Content: "Please enter a valid amount", Flags: 64},
 			})
 			return
 		}
-		input := strings.ToLower(interaction.ApplicationCommandData().Options[1].StringValue())
-		output := strings.ToLower(interaction.ApplicationCommandData().Options[2].StringValue())
+		input := strings.Replace(strings.ToLower(interaction.ApplicationCommandData().Options[1].StringValue()), " ", "", -1)
+		output := strings.Replace(strings.ToLower(interaction.ApplicationCommandData().Options[2].StringValue()), " ", "", -1)
 		rawResponse, errorObject := http.Get(fmt.Sprintf("https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/%v/%v.json", input, output))
 		if errorObject != nil {
 			session.InteractionRespond(interaction.Interaction, &discordgo.InteractionResponse{
@@ -322,17 +322,17 @@ var commandHandlers = map[string]func(session *discordgo.Session, interaction *d
 		})
 	},
 	"convert": func(session *discordgo.Session, interaction *discordgo.InteractionCreate) {
-		rawNumber, errorObject := strconv.ParseFloat(interaction.ApplicationCommandData().Options[0].StringValue(), 64)
+		rawNumber, errorObject := strconv.ParseFloat(strings.Replace(interaction.ApplicationCommandData().Options[0].StringValue(), " ", "", -1), 64)
 		if errorObject != nil {
 			session.InteractionRespond(interaction.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
-				Data: &discordgo.InteractionResponseData{Content: "Please enter a valid amount"},
+				Data: &discordgo.InteractionResponseData{Content: "Please enter a valid amount", Flags: 64},
 			})
 			return
 		}
 		amount := float64(rawNumber)
-		input := strings.ToLower(interaction.ApplicationCommandData().Options[1].StringValue())
-		output := strings.ToLower(interaction.ApplicationCommandData().Options[2].StringValue())
+		input := strings.Replace(strings.ToLower(interaction.ApplicationCommandData().Options[1].StringValue()), " ", "", -1)
+		output := strings.Replace(strings.ToLower(interaction.ApplicationCommandData().Options[2].StringValue()), " ", "", -1)
 		supported := false
 		for _, conversion := range conversions {
 			if strings.ToLower(conversion.Input) == input {
