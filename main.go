@@ -268,7 +268,7 @@ var commandHandlers = map[string]func(session *discordgo.Session, interaction *d
 	"vote": func(session *discordgo.Session, interaction *discordgo.InteractionCreate) {
 		embed := &discordgo.MessageEmbed{
 			Title:       "Vote Link",
-			Description: fmt.Sprintf("You can vote for ConverterBot using [this link](%v)", "https://top.gg/bot/877069460186492978"),
+			Description: fmt.Sprintf("You can vote for ConverterBot using [this link](%v)", "https://top.gg/bot/877069460186492978/vote"),
 			Color:       embedColor,
 		}
 		session.InteractionRespond(interaction.Interaction, &discordgo.InteractionResponse{
