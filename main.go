@@ -598,7 +598,7 @@ func guildJoinEvent(session *discordgo.Session, guild *discordgo.GuildCreate) {
 }
 
 func humanizeNumber(number float64) string {
-	stringNumber := fmt.Sprintf("%f", number)
+	stringNumber := strconv.FormatFloat(number, 'f', 6, 64)
 	parts := strings.Split(stringNumber, ".")
 	wholeNumber, _ := strconv.ParseInt(parts[0], 10, 0)
 	return humanize.Comma(wholeNumber) + "." + parts[1]
